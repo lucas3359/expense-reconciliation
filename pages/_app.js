@@ -1,4 +1,4 @@
-import '../styles/globals.css'
+import '../static/semantic/dist/semantic.css';
 
 function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />
