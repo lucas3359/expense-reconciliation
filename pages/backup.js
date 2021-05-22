@@ -14,37 +14,43 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to<br/>
+          Welcome to<br/> <br/>
           <Link href="/list">Expense Reconciliation App</Link>
         </h1>
 
         <p className={styles.description}>
-        Get started by uploading files{' '}
-          <code className={styles.code}>Upload</code>
+          Get started by editing{' '}
+          <code className={styles.code}>pages/index.js</code>
         </p>
 
         <div className={styles.grid}>
-        <Link href="/list" >
-          <div className={styles.card}>
-            <h2>Reconcile Page &rarr;</h2>
-            <p>Go through each transaction to do the splitting</p>
-            </div>
-            </Link>
+          <a href="https://nextjs.org/docs" className={styles.card}>
+            <h2>Documentation &rarr;</h2>
+            <p>Find in-depth information about Next.js features and API.</p>
+          </a>
 
           <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Category Page &rarr;</h2>
-            <p>Group transactions into set groups</p><br/><br/>
+            <h2>Learn &rarr;</h2>
+            <p>Learn about Next.js in an interactive course with quizzes!</p>
           </a>
 
           <a
             href="https://github.com/vercel/next.js/tree/master/examples"
             className={styles.card}
           >
-            <h2>Dashboard Page &rarr;</h2>
-            <p>Discover the past spent on different categories </p>
+            <h2>Examples &rarr;</h2>
+            <p>Discover and deploy boilerplate example Next.js projects.</p>
           </a>
 
-
+          <a
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            className={styles.card}
+          >
+            <h2>Deploy &rarr;</h2>
+            <p>
+              Instantly deploy your Next.js site to a public URL with Vercel.
+            </p>
+          </a>
         </div>
       </main>
 
@@ -54,8 +60,9 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '} Tom & Lu
+          Powered by{' '}
           <span className={styles.logo}>
+            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
