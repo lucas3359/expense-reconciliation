@@ -1,7 +1,8 @@
 import useSWR from 'swr';
+import Transaction from './model/transaction';
 
 export default function List () {
-    const fetcher = (...args) => fetch(...args).then(res => res.json());
+    const fetcher = (...args : any[]) => fetch(...args).then(res => res.json());
 
     const {data, error} = useSWR('/api/transactions', fetcher)
 
@@ -9,11 +10,13 @@ export default function List () {
     if (!data) return <div>loading...</div>
 
     const renderedList = () => {
-        return data.map(row => {
+        const rows : Transaction[] = data;
+
+        return rows.map(row => {
             return (<tr>
-                <td>{row.DTPOSTED}</td>
-                <td>{row.Desc}</td>
-                <td>{row.TRNAMT}</td>
+                <td>{row.date}</td>
+                <td>{row.details}</td>
+                <td>{row.amount}</td>
                 </tr>
                 )
        });
