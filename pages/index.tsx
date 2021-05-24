@@ -1,5 +1,8 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import Link from 'next/link'
+
+import UploadFile from './components/uploadFile';
 
 export default function Home() {
   return (
@@ -17,7 +20,9 @@ export default function Home() {
         </h1>
 
         <p className="ui header">
-        Get started by uploading files{' '}
+          Get started by uploading files{' '}
+          
+          <UploadFile/>
           <code className="ui code">Upload</code>
         </p>
 
