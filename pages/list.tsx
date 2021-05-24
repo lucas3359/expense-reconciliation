@@ -1,8 +1,8 @@
-import useSWR from 'swr';
-import Transaction from './model/transaction';
+import { transactions } from '@prisma/client'
+import useSWR from 'swr'
 
 export default function List () {
-    const fetcher = (...args : any[]) => fetch(...args).then(res => res.json());
+    const fetcher = (...args : any[]) => fetch(...args).then(res => res.json())
 
     const {data, error} = useSWR('/api/transactions', fetcher)
 
@@ -10,7 +10,7 @@ export default function List () {
     if (!data) return <div>loading...</div>
 
     const renderedList = () => {
-        const rows : Transaction[] = data;
+        const rows : transactions[] = data
 
         return rows.map(row => {
             return (<tr>
@@ -19,7 +19,7 @@ export default function List () {
                 <td>{row.amount}</td>
                 </tr>
                 )
-       });
+       })
     }
 
     return(
@@ -39,5 +39,5 @@ export default function List () {
             </table>
 
         </div>
-    );
+    )
 }
