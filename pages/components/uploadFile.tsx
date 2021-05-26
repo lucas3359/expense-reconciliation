@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from 'react';
+import ofx from 'node-ofx-parser'
 
 const UploadFile = ()=>{ 
 	const handleChange =(event : any) =>{
@@ -7,14 +8,27 @@ const UploadFile = ()=>{
 		const file : File = event.target.files[0]
 
 		reader.onloadend = () => {
-			console.log(reader.result)
+			parseFile(reader.result)
 		}
 
-		if (file && file.size < 10000 && file.type === 'text/javascript') {
+		console.log(file.name)
+		if (file && file.size < 10000 && file.name.endsWith(".ofx")) {
 			reader.readAsText(file)
 		} else {
 			alert('Bad file')
 		}
+	}
+
+	const parseFile = async (file : string | ArrayBuffer) => {
+		let data = ofx.parse(file)
+		let dataarr = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST.STMTTRN
+
+		const response = await fetch('/api/upload', {
+			method: 'POST',
+			body: JSON.stringify(dataarr)
+		})
+
+		console.log('response', response)
 	}
 
 	return (

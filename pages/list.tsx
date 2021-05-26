@@ -2,9 +2,7 @@ import { transactions } from '@prisma/client'
 import useSWR from 'swr'
 
 export default function List () {
-    const fetcher = (...args : any[]) => fetch(...args).then(res => res.json())
-
-    const {data, error} = useSWR('/api/transactions', fetcher)
+    const {data, error} = useSWR('/api/transactions')
 
     if (error) return <div>Failed to load</div>
     if (!data) return <div>loading...</div>
