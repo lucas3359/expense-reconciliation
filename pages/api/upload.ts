@@ -31,19 +31,7 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
     const body : TransactionImport = JSON.parse(req.body);
     
     if (body) {
-        const dataAccountId = body.accountNumber
-
-        if (!dataAccountId) {
-            console.log(body.startDate)
-            console.log(body.endDate)
-            console.log(body.accountNumber)
-            console.log(body.transactions)
-            console.log(dataAccountId)
-            res.status(500).json({})
-            return
-        }
-
-        const accid = await checkacnt(dataAccountId)
+        const accountId = await checkacnt(body.accountNumber)
 
         const transactions  = body.transactions.map((ofx : any) => {
             const dt = new Date(ofx['DTPOSTED'].substring(0,4)+"-"+ofx['DTPOSTED'].substring(4,6)+"-"+ofx['DTPOSTED'].substring(6,8))
@@ -52,7 +40,7 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
                 amount: ofx['TRNAMT'],
                 details: ofx['NAME'],
                 bank_id: ofx['FITID'],
-                account: accid
+                account: accountId
 
             }
             return t
