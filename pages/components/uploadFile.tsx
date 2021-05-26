@@ -1,5 +1,6 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react'
 import ofx from 'node-ofx-parser'
+import TransactionImport from '../model/transactionImport'
 
 const UploadFile = ()=>{ 
 	const handleChange =(event : any) =>{
@@ -21,11 +22,20 @@ const UploadFile = ()=>{
 
 	const parseFile = async (file : string | ArrayBuffer) => {
 		let data = ofx.parse(file)
-		let dataarr = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST.STMTTRN
+		let datatxn = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST.STMTTRN
+		let dataaccid=data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.CCACCTFROM.ACCTID
+		let datadate = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST
+		const body : TransactionImport = {
+			startDate: datadate?.DTSTART,
+			endDate: datadate?.DTEND,
+			transactions: datatxn,
+			accountNumber: dataaccid
+		}
 
+		console.log(data)
 		const response = await fetch('/api/upload', {
 			method: 'POST',
-			body: JSON.stringify(dataarr)
+			body: JSON.stringify(body)
 		})
 
 		console.log('response', response)
