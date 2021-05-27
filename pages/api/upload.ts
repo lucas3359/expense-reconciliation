@@ -38,7 +38,7 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
             const t : transactions = {
                 date: dt,
                 amount: ofx['TRNAMT'],
-                details: ofx['NAME'],
+                details: [ofx['NAME'], ofx['MEMO']].join(' '),
                 bank_id: ofx['FITID'],
                 account: accountId
 

@@ -21,15 +21,23 @@ const UploadFile = ()=>{
 	}
 
 	const parseFile = async (file : string | ArrayBuffer) => {
+		
 		let data = ofx.parse(file)
-		let datatxn = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST.STMTTRN
-		let dataaccid=data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.CCACCTFROM.ACCTID
-		let datadate = data.OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST
+		console.log(data)
+		const creditCardPrefix = data.OFX.CREDITCARDMSGSRSV1?.CCSTMTTRNRS?.CCSTMTRS
+		const bankPrefix = data.OFX.BANKMSGSRSV1?.STMTTRNRS?.STMTRS
+
+		const datatxn = creditCardPrefix ? creditCardPrefix.BANKTRANLIST.STMTTRN : bankPrefix.BANKTRANLIST.STMTTRN
+		const dataaccid= creditCardPrefix ? creditCardPrefix.CCACCTFROM.ACCTID : bankPrefix.BANKACCTFROM.ACCTID 
+		const datadate = creditCardPrefix ? creditCardPrefix.BANKTRANLIST :  bankPrefix.BANKTRANLIST
+		
+		
 		const body : TransactionImport = {
 			startDate: datadate?.DTSTART,
 			endDate: datadate?.DTEND,
 			transactions: datatxn,
 			accountNumber: dataaccid
+			
 		}
 
 		console.log(data)
