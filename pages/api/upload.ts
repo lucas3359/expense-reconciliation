@@ -5,8 +5,8 @@ import TransactionImport from '../model/transactionImport'
 
 const prisma = new PrismaClient()
 
-const checkacnt = async (accountId : string)=>{
-    console.log('Finding: ', accountId)
+const checkAccount = async (accountId : string)=>{
+
 
     let acc = await prisma.accounts.findUnique({
         where:{ account_number: accountId}
@@ -23,6 +23,11 @@ const checkacnt = async (accountId : string)=>{
     return acc.id
 }
 
+
+const dateTrans = (date : string)=>{
+    return new Date(date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8))
+}
+
 export default async (req : NextApiRequest, res : NextApiResponse) => {    
     if(req.method !=='POST'){
         res.status(405).json({})
@@ -31,12 +36,11 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
     const body : TransactionImport = JSON.parse(req.body);
     
     if (body) {
-        const accountId = await checkacnt(body.accountNumber)
+        const accountId = await checkAccount(body.accountNumber)
 
         const transactions  = body.transactions.map((ofx : any) => {
-            const dt = new Date(ofx['DTPOSTED'].substring(0,4)+"-"+ofx['DTPOSTED'].substring(4,6)+"-"+ofx['DTPOSTED'].substring(6,8))
             const t : transactions = {
-                date: dt,
+                date: dateTrans(ofx['DTPOSTED']),
                 amount: ofx['TRNAMT'],
                 details: [ofx['NAME'], ofx['MEMO']].join(' '),
                 bank_id: ofx['FITID'],

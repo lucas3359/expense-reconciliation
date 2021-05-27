@@ -23,7 +23,7 @@ const UploadFile = ()=>{
 	const parseFile = async (file : string | ArrayBuffer) => {
 		
 		let data = ofx.parse(file)
-		console.log(data)
+
 		const creditCardPrefix = data.OFX.CREDITCARDMSGSRSV1?.CCSTMTTRNRS?.CCSTMTRS
 		const bankPrefix = data.OFX.BANKMSGSRSV1?.STMTTRNRS?.STMTRS
 
@@ -40,13 +40,12 @@ const UploadFile = ()=>{
 			
 		}
 
-		console.log(data)
+
 		const response = await fetch('/api/upload', {
 			method: 'POST',
 			body: JSON.stringify(body)
 		})
 
-		console.log('response', response)
 	}
 
 	return (
