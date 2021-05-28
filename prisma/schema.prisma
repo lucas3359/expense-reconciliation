@@ -22,10 +22,22 @@ model transactions {
   details  String?   @db.VarChar(1000)
   account  Int?
   accounts accounts? @relation(fields: [account], references: [id])
+  split    split[]
 }
 
 model users {
   id    Int     @id @default(autoincrement())
   name  String? @db.VarChar(255)
   email String? @db.VarChar(255)
+  split split[]
+}
+
+model split {
+  id             Int           @id @default(autoincrement())
+  transaction_id Int?
+  user_id        Int?
+  amount         Decimal?      @db.Decimal
+  reviewed       Boolean?
+  transactions   transactions? @relation(fields: [transaction_id], references: [id])
+  users          users?        @relation(fields: [user_id], references: [id])
 }

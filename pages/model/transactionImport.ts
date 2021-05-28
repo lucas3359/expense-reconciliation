@@ -1,5 +1,3 @@
-import { transactions } from "@prisma/client";
-
 type TransactionImport = {
     accountNumber: string,
     startDate: string,

@@ -1,5 +1,6 @@
 import { transactions } from '@prisma/client'
 import useSWR from 'swr'
+import Transaction from './components/transaction'
 
 export default function List () {
     const {data, error} = useSWR('/api/transactions')
@@ -11,11 +12,7 @@ export default function List () {
         const rows : transactions[] = data
 
         return rows.map(row => {
-            return (<tr>
-                <td>{row.date}</td>
-                <td>{row.details}</td>
-                <td>{row.amount}</td>
-                </tr>
+            return (<Transaction row = {row} />
                 )
        })
     }
