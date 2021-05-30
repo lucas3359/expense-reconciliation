@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, transactions } from '@prisma/client'
-import SplitImport from '../model/splitImport'
+import { PrismaClient, split, transactions } from '@prisma/client'
+import SplitImport from '../../model/splitImport'
 
 const prisma = new PrismaClient()
 
@@ -36,7 +36,7 @@ const checkAccount= async (body : SplitImport) =>{
         return null
     }
 
-    let acc : SplitImport 
+    let acc : split
     let check = await prisma.split.findFirst({
         // @ts-ignore
         where:{  

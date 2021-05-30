@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient, transactions } from '@prisma/client'
-import TransactionImport from '../model/transactionImport'
+import TransactionImport from '../../model/transactionImport'
 
 
 const prisma = new PrismaClient()
@@ -39,6 +39,7 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
         const accountId = await checkAccount(body.accountNumber)
 
         const transactions  = body.transactions.map((ofx : any) => {
+            //@ts-ignore
             const t : transactions = {
                 date: dateTrans(ofx['DTPOSTED']),
                 amount: ofx['TRNAMT'],

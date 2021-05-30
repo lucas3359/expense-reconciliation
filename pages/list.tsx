@@ -1,6 +1,6 @@
 import { transactions } from '@prisma/client'
 import useSWR from 'swr'
-import Transaction from './components/transaction'
+import Transaction from '../components/transaction'
 
 export default function List () {
     const {data, error} = useSWR('/api/transactions')
