@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import UploadFile from './components/uploadFile';
+import UploadFile from '../components/uploadFile';
 
 export default function Home() {
   return (
