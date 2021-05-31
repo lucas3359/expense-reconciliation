@@ -1,8 +1,8 @@
 type TransactionImport = {
-    accountNumber: string,
-    startDate: string,
-    endDate: string,
-    transactions: any[]
+  accountNumber: string
+  startDate: string
+  endDate: string
+  transactions: any[]
 }
 
-export default TransactionImport;
+export default TransactionImport
