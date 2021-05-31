@@ -10,6 +10,7 @@
   "dependencies": {
     "@prisma/client": "2.23.0",
     "next": "10.2.2",
+    "next-auth": "^3.24.0",
     "node-ofx-parser": "^0.5.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
