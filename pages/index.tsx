@@ -1,7 +1,5 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import Link from 'next/link'
-import Auth from '../components/authentication'
 import { signIn, signOut, useSession } from 'next-auth/client'
 import UploadFile from '../components/uploadFile'
 
