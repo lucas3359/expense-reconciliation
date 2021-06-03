@@ -1,7 +1,9 @@
 import { transactions } from '@prisma/client'
 import useSWR from 'swr'
 import Transaction from '../components/transaction'
-import { signIn, signOut, useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/client'
+import React from 'react'
+import Layout from '../components/Layout'
 
 export default function List() {
   const { data, error } = useSWR('/api/transactions')
@@ -19,10 +21,14 @@ export default function List() {
     })
   }
   if (!session) {
-    return <div>Not signed in</div>
+    return (
+      <Layout>
+        <div>Not signed in</div>
+      </Layout>
+    )
   } else {
     return (
-      <div className='ui container'>
+      <Layout>
         <h1>Transaction List</h1>
 
         <table id='table' className='ui celled table'>
@@ -33,7 +39,7 @@ export default function List() {
           </thead>
           <tbody>{renderedList()}</tbody>
         </table>
-      </div>
+      </Layout>
     )
   }
 }
