@@ -21,8 +21,10 @@ const Header = () => {
         </Link>
       </div>
       <div className='flex-1 items-center justify-center leading-10 text-xl'>Home</div>
-      <div className={`flex-initial ${session && session.user ? 'text-blue-600' : ''}`}>
-        <Icon icon='profile' classes='h-10 w-10' />
+      <div className='auth'>
+        <div className={`flex-initial ${session && session.user ? 'text-blue-600' : ''}`}>
+          <Icon icon='profile' classes='h-10 w-10' />
+        </div>
       </div>
     </header>
   )

@@ -53,8 +53,78 @@ const Icon = (props: any) => {
           <path
             strokeLinecap='round'
             strokeLinejoin='round'
-            strokeWidth={2}
+            strokeWidth={1}
             d='M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+          />
+        </svg>
+      )
+    case 'upload':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
+          />
+        </svg>
+      )
+    case 'clipboard':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'
+          />
+        </svg>
+      )
+    case 'pie-chart':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z'
+          />
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z'
+          />
+        </svg>
+      )
+    case 'sort-asc':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12'
           />
         </svg>
       )
