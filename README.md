@@ -6,6 +6,11 @@ Transactions can be uploaded using the OFX format and are stored in a relational
 
 Google OAuth is used as the identity provider for logging in.
 
+![Home Page](/screens/home.png)
+![Transactions Page](/screens/transactions.png)
+
+![Demo](/screens/expenses-demo.png)
+
 ## Dependencies
 
 - [Next.js](https://nextjs.org/) (React/TypeScript)
