@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, split, transactions } from '@prisma/client'
+import { PrismaClient, split } from '@prisma/client'
 import SplitImport from '../../model/splitImport'
 import { getSession } from 'next-auth/client'
 
@@ -26,16 +26,7 @@ const checkAccount = async (body: SplitImport) => {
     },
   })
 
-  console.log(
-    'transaction_id: ' + body.transaction_id + ' & ' + 'user_id' + body.user_id
-  )
-  console.log(check)
-
-  if (
-    check &&
-    check.transaction_id === body.transaction_id &&
-    check.user_id === body.user_id
-  ) {
+  if (check && check.transaction_id === body.transaction_id && check.user_id === body.user_id) {
     acc = await prisma.split.update({
       where: {
         // @ts-ignore

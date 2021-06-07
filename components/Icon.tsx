@@ -16,6 +16,28 @@ const Icon = (props: any) => {
           <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
         </svg>
       )
+    case 'up':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 15l7-7 7 7' />
+        </svg>
+      )
+    case 'right':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+        </svg>
+      )
     case 'github':
       return (
         <svg
@@ -125,6 +147,49 @@ const Icon = (props: any) => {
             strokeLinejoin='round'
             strokeWidth={1}
             d='M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12'
+          />
+        </svg>
+      )
+    case 'tick':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 13l4 4L19 7' />
+        </svg>
+      )
+    case 'cross':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636'
+          />
+        </svg>
+      )
+    case 'trash':
+      return (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          className={`${classes ? classes : 'h-6 w-6'}`}
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={1}
+            d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
           />
         </svg>
       )
