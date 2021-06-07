@@ -9,7 +9,7 @@ Google OAuth is used as the identity provider for logging in.
 ![Home Page](/screens/home.png)
 ![Transactions Page](/screens/transactions.png)
 
-![Demo](/screens/expenses-demo.png)
+![Demo](/screens/expenses-demo.gif)
 
 ## Dependencies
 
