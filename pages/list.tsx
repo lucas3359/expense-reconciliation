@@ -1,39 +1,48 @@
-import { transactions } from '@prisma/client'
+import { transactions, users } from '@prisma/client'
 import useSWR from 'swr'
-import Transaction from '../components/transaction'
-import { signIn, signOut, useSession } from 'next-auth/client'
+import Transaction from '../components/Transaction'
+import { useSession } from 'next-auth/client'
+import React from 'react'
+import Layout from '../components/Layout'
 
 export default function List() {
-  const { data, error } = useSWR('/api/transactions')
+  const { data: transactionData, error: transactionError } = useSWR('/api/transactions')
+  const { data: userData, error: userError } = useSWR('/api/user')
 
   const [session, loading] = useSession()
 
-  if (error) return <div>Failed to load</div>
-  if (!data) return <div>loading...</div>
+  if (transactionError || userError) return <div>Failed to load</div>
+  if (!transactionData || !userData) return <div>loading...</div>
 
   const renderedList = () => {
-    const rows: transactions[] = data
+    const rows: transactions[] = transactionData
+    const users: users[] = userData
 
     return rows.map((row) => {
-      return <Transaction row={row} />
+      return <Transaction key={row.id} row={row} users={users} />
     })
   }
   if (!session) {
-    return <div>Not signed in</div>
+    return (
+      <Layout>
+        <div>Not signed in</div>
+      </Layout>
+    )
   } else {
     return (
-      <div className='ui container'>
-        <h1>Transaction List</h1>
-
-        <table id='table' className='ui celled table'>
+      <Layout>
+        <table id='table' className='w-full table-auto'>
           <thead>
-            <th>Date</th>
-            <th>Desc</th>
-            <th>$</th>
+            <tr className='bg-gray-100'>
+              <th className='py-3'>Date</th>
+              <th className='py-3'>Description</th>
+              <th className='py-3 text-right'>Amount</th>
+              <th className='py-3'></th>
+            </tr>
           </thead>
-          <tbody>{renderedList()}</tbody>
+          <tbody className='text-sm font-light'>{renderedList()}</tbody>
         </table>
-      </div>
+      </Layout>
     )
   }
 }

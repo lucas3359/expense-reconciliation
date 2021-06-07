@@ -1,10 +1,20 @@
-import React, { useState, ChangeEvent } from 'react'
+import { split, users } from '@prisma/client'
+import React, { useState } from 'react'
 import SplitImport from '../model/splitImport'
 
-const Split = ({ data, amount, transaction_id }) => {
+const Split = ({
+  data,
+  amount,
+  transaction_id,
+  users,
+}: {
+  data: any
+  amount: number
+  transaction_id: number
+  users: users[]
+}) => {
   const [percent, setPercent] = useState(0.3)
-  const [amount1, setAmount1] = useState(amount * percent)
-  const [amount2, setAmount2] = useState(amount * (1 - percent))
+  const [amounts, setAmounts] = useState(splitAmounts(percent * amount, users[0].id))
 
   const splitOptions = [
     { value: 0.3, description: '30%' },
@@ -13,101 +23,120 @@ const Split = ({ data, amount, transaction_id }) => {
     { value: -1, description: 'Custom' },
   ]
 
-  const setAmount = (event, acc) => {
-    if (Number(event.target.value) && acc === 1) {
-      setPercent(-1)
-      setAmount1(event.target.value)
-      setAmount2(amount - event.target.value)
-    } else if (Number(event.target.value) && acc === 2) {
-      setPercent(-1)
-      setAmount2(event.target.value)
-      setAmount1(amount - event.target.value)
-    }
+  function splitAmounts(value: number, account_id: number): number[] {
+    const userCount = users.length
+    const newAmounts = amounts ? amounts : []
+    newAmounts[account_id] = value
+
+    users.map((user) => {
+      if (user.id !== account_id) {
+        newAmounts[user.id] = (amount - value) / Math.min(userCount - 1, 1)
+      }
+    })
+
+    return newAmounts
   }
 
-  const splitAmount = (event) => {
-    setPercent(Number(event.target.value))
-    setAmount1(amount * Number(event.target.value))
-    setAmount2(Math.round(amount * (1 - Number(event.target.value))))
+  const setAmountChange = (event: React.ChangeEvent<HTMLInputElement>, account_id: number) => {
+    const value = Number(event.target.value)
+    setAmount(value, account_id)
+    setPercent(-1)
+  }
+
+  const setAmount = (value: number, account_id: number) => {
+    if (!value) return
+
+    const newAmounts = splitAmounts(value, account_id)
+
+    setAmounts(newAmounts)
+  }
+
+  const splitAmount = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    var percentage = Number(event.target.value)
+    setPercent(percentage)
+    setAmount(percentage * amount, users[0].id)
   }
 
   const parseSplit = async () => {
-    const body1: SplitImport = {
-      transaction_id: transaction_id,
-      user_id: 2,
-      amount: amount1,
-    }
+    users.map(async (user) => {
+      const body: SplitImport = {
+        transaction_id: transaction_id,
+        user_id: user.id,
+        amount: amounts[user.id],
+      }
 
-    const body2: SplitImport = {
-      transaction_id: transaction_id,
-      user_id: 1,
-      amount: amount2,
-    }
-
-    const response1 = await fetch('/api/split', {
-      method: 'POST',
-      body: JSON.stringify(body1),
+      await fetch('/api/split', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      })
     })
+  }
 
-    const response2 = await fetch('/api/split', {
-      method: 'POST',
-      body: JSON.stringify(body2),
+  const renderUserDropdown = () => {
+    return users.map((user) => {
+      return (
+        <span key={`${transaction_id}-split-${user.id}-input`}>
+          <label className='italic'>{user.name}</label>
+          <input
+            className='w-16 text-center'
+            type='text'
+            placeholder='Amount'
+            value={(Math.round(amounts[user.id] * 100) / 100).toFixed(2)}
+            onChange={(e) => {
+              setAmountChange(e, user.id)
+            }}
+          />
+        </span>
+      )
+    })
+  }
+
+  const renderAlreadySplit = (splits: split[]) => {
+    return splits.map((split: split) => {
+      return (
+        <span key={`span-${transaction_id}-${split.id}`} className='text-center'>
+          <span className='font-normal'>{users?.find((user) => user.id == split.user_id)?.name}: </span>
+          <em>{(Math.round(Number(split.amount) * 100) / 100).toFixed(2)}</em>&nbsp;
+        </span>
+      )
     })
   }
 
   if (data.length !== 0) {
     return (
-      <td>
-        <div>
-          <button className='ui secondary button'>Splited</button>
-        </div>
+      <td className='p-2' colSpan={4}>
+        Already split: {renderAlreadySplit(data)}
       </td>
     )
   } else {
     const renderSplitOptions = splitOptions.map((option) => {
-      return <option value={option.value}>{option.description}</option>
+      return (
+        <option key={`option-${transaction_id}-${option.value}`} value={option.value}>
+          {option.description}
+        </option>
+      )
     })
     return (
-      <td>
-        <div>
-          <button className='ui primary button' onClick={parseSplit}>
-            split
+      <>
+        <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
+          <div>
+            <select className='mr-2' value={percent} onChange={splitAmount}>
+              {renderSplitOptions}
+            </select>
+            {renderUserDropdown()}
+          </div>
+        </td>
+        <td className='p-2'>
+          {' '}
+          <button
+            className='p-1 bg-green-300 w-16 border-green-300 hover:bg-green-100 focus:border-green-300'
+            onClick={parseSplit}>
+            Split
           </button>
-          <select
-            className='ui dropdown'
-            value={percent}
-            onChange={splitAmount}>
-            {renderSplitOptions}
-          </select>
-          <div className='ui right labeled input'>
-            <label className='ui label'> Lucas </label>
-
-            <input
-              type='text'
-              placeholder='Amount'
-              value={amount1}
-              onChange={(e) => {
-                setAmount(e, 1)
-              }}
-            />
-          </div>
-          <div className='ui right labeled input'>
-            <label className='ui label'> Thomas </label>
-            <input
-              type='text'
-              placeholder='Amount'
-              value={amount2}
-              onChange={(e) => {
-                setAmount(e, 2)
-              }}
-            />
-          </div>
-        </div>
-      </td>
+        </td>
+      </>
     )
   }
 }
 
 export default Split
-
-//
