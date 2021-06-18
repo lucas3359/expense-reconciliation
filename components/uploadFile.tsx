@@ -1,6 +1,4 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import ofx from 'node-ofx-parser'
-import TransactionImport from '../model/transactionImport'
 import Card from './Card'
 import Icon from './Icon'
 
@@ -26,7 +24,7 @@ const UploadFile = () => {
     const file: File = event.target.files[0]
 
     reader.onloadend = () => {
-      parseFile(reader.result)
+      sendFile(reader.result)
     }
 
     if (file && file.size < 10000 && file.name.endsWith('.ofx')) {
@@ -36,26 +34,10 @@ const UploadFile = () => {
     }
   }
 
-  const parseFile = async (file: string | ArrayBuffer) => {
-    let data = ofx.parse(file)
-
-    const creditCardPrefix = data.OFX.CREDITCARDMSGSRSV1?.CCSTMTTRNRS?.CCSTMTRS
-    const bankPrefix = data.OFX.BANKMSGSRSV1?.STMTTRNRS?.STMTRS
-
-    const datatxn = creditCardPrefix ? creditCardPrefix.BANKTRANLIST.STMTTRN : bankPrefix.BANKTRANLIST.STMTTRN
-    const dataaccid = creditCardPrefix ? creditCardPrefix.CCACCTFROM.ACCTID : bankPrefix.BANKACCTFROM.ACCTID
-    const datadate = creditCardPrefix ? creditCardPrefix.BANKTRANLIST : bankPrefix.BANKTRANLIST
-
-    const body: TransactionImport = {
-      startDate: datadate?.DTSTART,
-      endDate: datadate?.DTEND,
-      transactions: datatxn,
-      accountNumber: dataaccid,
-    }
-
+  const sendFile = async (file: string | ArrayBuffer) => {
     await fetch('/api/upload', {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: file,
     })
   }
 

@@ -8,37 +8,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accounts {
-  id             Int            @id @default(autoincrement())
-  account_number String?        @unique @db.VarChar(50)
-  name           String?        @db.VarChar(255)
-  transactions   transactions[]
+model split {
+  id             Int          @id @default(autoincrement())
+  transaction_id Int?
+  user_id        Int?
+  amount         Decimal?     @db.Decimal
+  reviewed       Boolean?
+  transaction    transaction? @relation(fields: [transaction_id], references: [id])
+  user           user?        @relation(fields: [user_id], references: [id])
 }
 
-model transactions {
-  id       Int       @id @default(autoincrement())
-  bank_id  String?   @unique @db.VarChar(255)
-  date     DateTime? @db.Timestamptz(6)
-  amount   Decimal?  @db.Decimal
-  details  String?   @db.VarChar(1000)
-  account  Int?
-  accounts accounts? @relation(fields: [account], references: [id])
-  split    split[]
+model account {
+  id             Int           @id @default(autoincrement())
+  account_number String?       @unique @db.VarChar(50)
+  name           String?       @db.VarChar(255)
+  bank_import    bank_import[]
+  transaction    transaction[]
 }
 
-model users {
+model transaction {
+  id          Int          @id @default(autoincrement())
+  bank_id     String?      @unique @db.VarChar(255)
+  date        DateTime?    @db.Date
+  amount      Decimal?     @db.Decimal
+  details     String?      @db.VarChar(1000)
+  account_id  Int?
+  import_id   Int?
+  account     account?     @relation(fields: [account_id], references: [id])
+  bank_import bank_import? @relation(fields: [import_id], references: [id])
+  split       split[]
+}
+
+model user {
   id    Int     @id @default(autoincrement())
   name  String? @db.VarChar(255)
   email String? @db.VarChar(255)
   split split[]
 }
 
-model split {
-  id             Int           @id @default(autoincrement())
-  transaction_id Int?
-  user_id        Int?
-  amount         Decimal?      @db.Decimal
-  reviewed       Boolean?
-  transactions   transactions? @relation(fields: [transaction_id], references: [id])
-  users          users?        @relation(fields: [user_id], references: [id])
+model bank_import {
+  id          Int           @id @default(autoincrement())
+  account_id  Int
+  start_date  DateTime      @db.Date
+  end_date    DateTime      @db.Date
+  account     account       @relation(fields: [account_id], references: [id])
+  transaction transaction[]
 }

@@ -1,8 +1,9 @@
-import { split, users } from '@prisma/client'
 import React, { useState } from 'react'
+import Split from '../model/split'
 import SplitImport from '../model/splitImport'
+import User from '../model/user'
 
-const Split = ({
+const TransactionSplit = ({
   data,
   amount,
   transaction_id,
@@ -11,7 +12,7 @@ const Split = ({
   data: any
   amount: number
   transaction_id: number
-  users: users[]
+  users: User[]
 }) => {
   const [percent, setPercent] = useState(0.3)
   const [amounts, setAmounts] = useState(splitAmounts(percent * amount, users[0].id))
@@ -91,11 +92,11 @@ const Split = ({
     })
   }
 
-  const renderAlreadySplit = (splits: split[]) => {
-    return splits.map((split: split) => {
+  const renderAlreadySplit = (splits: Split[]) => {
+    return splits.map((split: Split) => {
       return (
         <span key={`span-${transaction_id}-${split.id}`} className='text-center'>
-          <span className='font-normal'>{users?.find((user) => user.id == split.user_id)?.name}: </span>
+          <span className='font-normal'>{users?.find((user) => user.id == split.userId)?.name}: </span>
           <em>{(Math.round(Number(split.amount) * 100) / 100).toFixed(2)}</em>&nbsp;
         </span>
       )
@@ -139,4 +140,4 @@ const Split = ({
   }
 }
 
-export default Split
+export default TransactionSplit

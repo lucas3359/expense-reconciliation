@@ -1,30 +1,21 @@
-import { split, transactions, users } from '@prisma/client'
 import React, { useState } from 'react'
+import Transaction from '../model/transaction'
+import User from '../model/user'
 import Icon from './Icon'
-import Split from './Split'
+import Split from '../model/split'
+import TransactionSplit from './TransactionSplit'
 
-const Transaction = ({ row, users }: { row: transactions; users: users[] }) => {
+const TransactionRow = ({ row, users }: { row: Transaction; users: User[] }) => {
   const [showSplit, setShowSplit] = useState(false)
 
-  //@ts-ignore Types don't include relations
-  const splits: split[] = row.split
-
-  // For some reason date actually comes through as a string
-  const renderDate = (dateIsString: Date) => {
-    const date = new Date(dateIsString)
-    if (date) {
-      return `${date.getDate()}/${date.getMonth() + 1}`
-    } else {
-      return
-    }
-  }
+  const splits: Split[] = row.splits
 
   const renderSplit = () => {
     if (!showSplit) return
 
     return (
       <tr className='border-b border-gray-100 bg-white' key={`${row.id}-tr-split`}>
-        <Split
+        <TransactionSplit
           key={`${row.id}-split`}
           data={splits}
           amount={Number(row.amount)}
@@ -59,7 +50,7 @@ const Transaction = ({ row, users }: { row: transactions; users: users[] }) => {
   return (
     <>
       <tr className='border-b border-gray-100 bg-white hover:bg-gray-100' key={`row-${row.id}`}>
-        <td className='p-2 text-gray-600'>{`${renderDate(row.date)}`}</td>
+        <td className='p-2 text-gray-600'>{`${row.date}`}</td>
         <td className='p-2'>{row.details}</td>
         <td className={`p-2 text-right font-semibold ${Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'}`}>
           {row.amount ? Number(row.amount).toFixed(2) : ''}
@@ -71,4 +62,4 @@ const Transaction = ({ row, users }: { row: transactions; users: users[] }) => {
   )
 }
 
-export default Transaction
+export default TransactionRow

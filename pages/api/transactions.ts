@@ -1,17 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, transactions } from '@prisma/client'
 import { getSession } from 'next-auth/client'
-
-const prisma = new PrismaClient()
+import TransactionService from '../../services/transactionService'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
   if (session) {
-    const transactions: transactions[] = await prisma.transactions.findMany({
-      include: {
-        split: true,
-      },
-    })
+    const transactionService = new TransactionService()
+
+    const transactions = await transactionService.getTransactionList()
 
     res.status(200).json(transactions)
   } else {
