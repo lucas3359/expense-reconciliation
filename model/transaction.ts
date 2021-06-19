@@ -1,6 +1,6 @@
 type Transaction = {
   id: number
-  date: string
+  date: Date
   amount: number
   details: string
   accountId: number

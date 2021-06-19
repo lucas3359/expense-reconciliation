@@ -12,7 +12,7 @@ model split {
   id             Int          @id @default(autoincrement())
   transaction_id Int?
   user_id        Int?
-  amount         Decimal?     @db.Decimal
+  amount         Int?
   reviewed       Boolean?
   transaction    transaction? @relation(fields: [transaction_id], references: [id])
   user           user?        @relation(fields: [user_id], references: [id])
@@ -30,7 +30,7 @@ model transaction {
   id          Int          @id @default(autoincrement())
   bank_id     String?      @unique @db.VarChar(255)
   date        DateTime?    @db.Date
-  amount      Decimal?     @db.Decimal
+  amount      Int?
   details     String?      @db.VarChar(1000)
   account_id  Int?
   import_id   Int?

@@ -47,13 +47,22 @@ const TransactionRow = ({ row, users }: { row: Transaction; users: User[] }) => 
     }
   }
 
+  const renderDate = (inputDate: string | Date) => {
+    const date = new Date(inputDate)
+    return `${date.getDate()}/${date.getMonth() + 1}`
+  }
+
+  const renderCurrency = (amount: number): string => {
+    return (amount / 100).toFixed(2)
+  }
+
   return (
     <>
       <tr className='border-b border-gray-100 bg-white hover:bg-gray-100' key={`row-${row.id}`}>
-        <td className='p-2 text-gray-600'>{`${row.date}`}</td>
+        <td className='p-2 text-gray-600'>{renderDate(row.date)}</td>
         <td className='p-2'>{row.details}</td>
         <td className={`p-2 text-right font-semibold ${Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'}`}>
-          {row.amount ? Number(row.amount).toFixed(2) : ''}
+          {row.amount ? renderCurrency(row.amount) : ''}
         </td>
         <td className='p-2 text-center'>{splitButton()}</td>
       </tr>

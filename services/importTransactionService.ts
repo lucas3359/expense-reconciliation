@@ -1,12 +1,14 @@
 import { PrismaClient, transaction } from '@prisma/client'
 import ofx from 'node-ofx-parser'
 import TransactionImport from '../model/transactionImport'
+import DbService from './dbService'
 
 class ImportTransactionService {
   private readonly prisma: PrismaClient
 
   public constructor() {
-    this.prisma = new PrismaClient()
+    const dbService = new DbService()
+    this.prisma = dbService.getPrismaClient()
   }
 
   public parseOfxBody(file: string): TransactionImport {
@@ -28,15 +30,15 @@ class ImportTransactionService {
     return body
   }
 
-  public async import(body: TransactionImport) {
+  public async importTransactions(body: TransactionImport) {
     const accountId = await this.findOrCreateAccountId(body.accountNumber)
-    const importId = await this.createNewImportId()
+    const importId = await this.createNewImportId(body.startDate, body.endDate, accountId)
 
     const transactions: transaction[] = body.transactions.map((ofx: any) => {
       //@ts-ignore id is created by prisma
       const transaction: transaction = {
-        date: this.dateTrans(ofx['DTPOSTzED']),
-        amount: ofx['TRNAMT'],
+        date: this.convertOfxDateToDatabase(ofx['DTPOSTED']),
+        amount: Math.round(ofx['TRNAMT'] * 100),
         details: [ofx['NAME'], ofx['MEMO']].join(' '),
         bank_id: ofx['FITID'],
         account_id: accountId,
@@ -46,7 +48,7 @@ class ImportTransactionService {
     })
 
     return await this.prisma.transaction.createMany({
-      data: body.transactions,
+      data: transactions,
       skipDuplicates: true,
     })
   }
@@ -67,12 +69,18 @@ class ImportTransactionService {
     return account.id
   }
 
-  private async createNewImportId(): Promise<number> {
-    //await this.prisma.import.create
-    return null
+  private async createNewImportId(startDate: string, endDate: string, accountId: number): Promise<number> {
+    const bankImport = await this.prisma.bank_import.create({
+      data: {
+        start_date: this.convertOfxDateToDatabase(startDate),
+        end_date: this.convertOfxDateToDatabase(endDate),
+        account_id: accountId,
+      },
+    })
+    return bankImport.id
   }
 
-  private dateTrans(date: string) {
+  private convertOfxDateToDatabase(date: string) {
     return new Date(date.substring(0, 4) + '-' + date.substring(4, 6) + '-' + date.substring(6, 8))
   }
 }

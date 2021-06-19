@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from './Card'
 import Icon from './Icon'
 
@@ -6,7 +6,7 @@ const UploadFile = () => {
   const [badFile, setBadFile] = useState(false)
 
   useEffect(() => {
-    let timeout
+    let timeout: NodeJS.Timeout
     if (badFile === true) {
       timeout = setTimeout(() => {
         setBadFile(false)
@@ -27,7 +27,7 @@ const UploadFile = () => {
       sendFile(reader.result)
     }
 
-    if (file && file.size < 10000 && file.name.endsWith('.ofx')) {
+    if (file && file.size < 100000 && file.name.endsWith('.ofx')) {
       reader.readAsText(file)
     } else {
       setBadFile(true)
@@ -35,10 +35,14 @@ const UploadFile = () => {
   }
 
   const sendFile = async (file: string | ArrayBuffer) => {
-    await fetch('/api/upload', {
+    const response = await fetch('/api/upload', {
       method: 'POST',
       body: file,
     })
+
+    if (response.status !== 201 && !response.ok) {
+      setBadFile(true)
+    }
   }
 
   const uploadBar = (

@@ -1,11 +1,13 @@
 import { PrismaClient, user } from '@prisma/client'
 import User from '../model/user'
+import DbService from './dbService'
 
 class UserService {
   private readonly prisma: PrismaClient
 
   public constructor() {
-    this.prisma = new PrismaClient()
+    const dbService = new DbService()
+    this.prisma = dbService.getPrismaClient()
   }
 
   public async getUsers(): Promise<User[]> {

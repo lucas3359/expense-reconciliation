@@ -1,8 +1,8 @@
 type Split = {
-  id: number
+  id?: number
   userId: number
   amount: number
-  reviewed: boolean
+  reviewed?: boolean
 }
 
 export default Split

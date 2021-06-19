@@ -1,23 +1,30 @@
 import { PrismaClient, split } from '@prisma/client'
 import Split from '../model/split'
-import SplitImport from '../model/splitImport'
+import UpdateSplit from '../model/updateSplit'
+import DbService from './dbService'
 
 class SplitService {
   private readonly prisma: PrismaClient
 
   public constructor() {
-    this.prisma = new PrismaClient()
+    const dbService = new DbService()
+    this.prisma = dbService.getPrismaClient()
   }
 
-  public async updateSplit(body: SplitImport): Promise<Split> {
-    if (!body.transaction_id || !body.user_id) {
+  public async updateSplit(body: UpdateSplit): Promise<Split[]> {
+    if (!body.transactionId || body.splits.length === 0) {
       console.error('body is empty', body)
       return null
     }
 
-    const split = await this.createOrUpdateSplit(body)
+    const updatedSplits = []
 
-    return this.convertPrismaToSplit(split)
+    body.splits.map(async (split) => {
+      const updatedSplit = await this.createOrUpdateSplit(split, body.transactionId)
+      updatedSplits.push(this.convertPrismaToSplit(updatedSplit))
+    })
+
+    return updatedSplits
   }
 
   private convertPrismaToSplit(prismaSplit: split): Split {
@@ -29,43 +36,37 @@ class SplitService {
     }
   }
 
-  private async createOrUpdateSplit(body: SplitImport): Promise<split> {
-    let acc: split
-    let check = await this.prisma.split.findFirst({
-      // @ts-ignore
+  private async createOrUpdateSplit(body: Split, transactionId: number): Promise<split> {
+    let split: split
+    let existing = await this.prisma.split.findFirst({
       where: {
-        AND: [
-          // @ts-ignore
-          { transaction_id: body.transaction_id },
-          { user_id: body.user_id },
-        ],
+        AND: [{ transaction_id: transactionId }, { user_id: body.userId }],
       },
       orderBy: {
         transaction_id: 'asc',
       },
     })
 
-    if (check && check.transaction_id === body.transaction_id && check.user_id === body.user_id) {
-      acc = await this.prisma.split.update({
+    if (existing && existing.transaction_id === transactionId && existing.user_id === body.userId) {
+      split = await this.prisma.split.update({
         where: {
-          // @ts-ignore
-          id: check.id,
+          id: existing.id,
         },
         data: {
           amount: body.amount,
         },
       })
     } else {
-      acc = await this.prisma.split.create({
+      split = await this.prisma.split.create({
         data: {
-          transaction_id: body.transaction_id,
-          user_id: body.user_id,
+          transaction_id: transactionId,
+          user_id: body.userId,
           amount: body.amount,
         },
       })
     }
 
-    return acc
+    return split
   }
 }
 
