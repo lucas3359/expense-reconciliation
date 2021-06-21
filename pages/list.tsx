@@ -1,13 +1,14 @@
-import { transactions, users } from '@prisma/client'
 import useSWR from 'swr'
-import Transaction from '../components/Transaction'
 import { useSession } from 'next-auth/client'
 import React from 'react'
 import Layout from '../components/Layout'
+import TransactionRow from '../components/TransactionRow'
+import Transaction from '../model/transaction'
+import User from '../model/user'
 
 export default function List() {
-  const { data: transactionData, error: transactionError } = useSWR('/api/transactions')
-  const { data: userData, error: userError } = useSWR('/api/user')
+  const { data: transactionData, error: transactionError } = useSWR<Transaction[], any>('/api/transactions')
+  const { data: userData, error: userError } = useSWR<User[], any>('/api/user')
 
   const [session, loading] = useSession()
 
@@ -15,11 +16,8 @@ export default function List() {
   if (!transactionData || !userData) return <div>loading...</div>
 
   const renderedList = () => {
-    const rows: transactions[] = transactionData
-    const users: users[] = userData
-
-    return rows.map((row) => {
-      return <Transaction key={row.id} row={row} users={users} />
+    return transactionData.map((row) => {
+      return <TransactionRow key={row.id} row={row} users={userData} />
     })
   }
   if (!session) {

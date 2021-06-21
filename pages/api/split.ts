@@ -1,52 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, split } from '@prisma/client'
-import SplitImport from '../../model/splitImport'
+import SplitImport from '../../model/updateSplit'
 import { getSession } from 'next-auth/client'
+import SplitService from '../../services/splitService'
+import TransactionService from '../../services/transactionService'
 
-const prisma = new PrismaClient()
+const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
+  let sum = 0
+  let absSum = 0
 
-const checkAccount = async (body: SplitImport) => {
-  if (!body.transaction_id || !body.user_id) {
-    console.error('body is empty', body)
-    return null
-  }
-
-  let acc: split
-  let check = await prisma.split.findFirst({
-    // @ts-ignore
-    where: {
-      AND: [
-        // @ts-ignore
-        { transaction_id: body.transaction_id },
-        { user_id: body.user_id },
-      ],
-    },
-    orderBy: {
-      transaction_id: 'asc',
-    },
+  // Check to make sure both the sum add up, and there isn't a disrepancy in
+  // positive/negative
+  split.splits.forEach((split) => {
+    absSum += Math.abs(split.amount)
+    sum += split.amount
   })
 
-  if (check && check.transaction_id === body.transaction_id && check.user_id === body.user_id) {
-    acc = await prisma.split.update({
-      where: {
-        // @ts-ignore
-        id: check.id,
-      },
-      data: {
-        amount: body.amount,
-      },
-    })
-  } else {
-    acc = await prisma.split.create({
-      data: {
-        transaction_id: body.transaction_id,
-        user_id: body.user_id,
-        amount: body.amount,
-      },
-    })
-  }
-
-  return acc
+  console.log(`Sum was: ${sum} and absolute sum was ${absSum} vs ${amount}`)
+  return sum === amount && absSum === Math.abs(amount)
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -54,9 +24,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (session) {
     const body: SplitImport = JSON.parse(req.body)
 
-    const acc = checkAccount(body)
+    const splitService = new SplitService()
+    const transactionService = new TransactionService()
 
-    res.status(201).json(acc)
+    const transaction = await transactionService.getTransactionById(body.transactionId)
+
+    if (!splitAmountsAddUp(body, transaction.amount)) {
+      res.status(204).json({ error: 'Amounts do not add up' })
+    } else {
+      const split = await splitService.updateSplit(body)
+
+      res.status(201).json(split)
+    }
   } else {
     res.status(401)
   }

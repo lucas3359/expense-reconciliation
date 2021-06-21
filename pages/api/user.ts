@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, users } from '@prisma/client'
 import { getSession } from 'next-auth/client'
-
-const prisma = new PrismaClient()
+import UserService from '../../services/userService'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
   if (session) {
-    const users: users[] = await prisma.users.findMany()
+    const userService = new UserService()
+
+    const users = await userService.getUsers()
 
     res.status(200).json(users)
   } else {
