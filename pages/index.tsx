@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useSession } from 'next-auth/client'
-import UploadFile from '../components/UploadFile'
+import UploadFile from '../components/uploadFile'
 import Card from '../components/Card'
 import Layout from '../components/Layout'
 import Icon from '../components/Icon'
