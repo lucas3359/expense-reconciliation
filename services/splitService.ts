@@ -1,5 +1,7 @@
 import { PrismaClient, split } from '@prisma/client'
 import Split from '../model/split'
+import Total from '../model/total'
+import Totals from '../model/totals'
 import UpdateSplit from '../model/updateSplit'
 import DbService from './dbService'
 
@@ -9,6 +11,15 @@ class SplitService {
   public constructor() {
     const dbService = new DbService()
     this.prisma = dbService.getPrismaClient()
+  }
+
+  public async getTotals(): Promise<Totals> {
+    var totals = await this.getUserTotals()
+
+    return {
+      notReconciledTotal: 0,
+      totals: totals,
+    }
   }
 
   public async updateSplit(body: UpdateSplit): Promise<Split[]> {
@@ -67,6 +78,24 @@ class SplitService {
     }
 
     return split
+  }
+
+  private async getUserTotals(): Promise<Total[]> {
+    const groupTotals = await this.prisma.split.groupBy({
+      by: ['user_id'],
+      _sum: {
+        amount: true,
+      },
+    })
+
+    const convertedTotals = groupTotals.map((total) => {
+      return {
+        userId: total.user_id,
+        amount: total._sum.amount,
+      }
+    })
+
+    return convertedTotals
   }
 }
 
