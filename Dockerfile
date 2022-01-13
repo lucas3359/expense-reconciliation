@@ -19,6 +19,8 @@ RUN npx prisma generate
 FROM node:17 AS runner
 WORKDIR /app
 
+RUN apt update && apt install -y dnsutils
+
 ENV NODE_ENV production
 
 #RUN addgroup -g 1001 -S nodejs
