@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@prisma/client": "^2.23.0",
+    "@prisma/client": "^3.8.1",
     "autoprefixer": "^10.2.6",
     "next": "12",
     "next-auth": "^3.24.0",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^15.6.0",
     "@types/react": "^17.0.6",
-    "prisma": "^2.23.0",
+    "prisma": "^3.8.1",
     "typescript": "^4.2.4"
   }
 }
