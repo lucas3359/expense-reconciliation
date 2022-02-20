@@ -1,5 +1,5 @@
+import { AppProps } from 'next/app'
 import { Provider } from 'next-auth/client'
-import { AppProps } from 'next/dist/next-server/lib/router/router'
 import 'tailwindcss/tailwind.css'
 import '../styles/globals.css'
 
